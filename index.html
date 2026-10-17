@@ -1,1 +1,21 @@
-
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#FFF8EE">
+<title>Bubble Bliss</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <h1>Bubble Bliss</h1>
+  <div class="bar">
+    <div class="card"><small>Score</small><b id="score">0</b></div>
+    <div class="card"><small>Best</small><b id="best">0</b></div>
+  </div>
+  <div id="board" aria-label="Bubble board"></div>
+  <p id="msg" aria-live="polite"></p>
+  <button id="again" class="btn" type="button">New board</button>
+  <script src="game.js"></script>
+</body>
+</html>
