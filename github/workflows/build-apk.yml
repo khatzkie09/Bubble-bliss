@@ -1,0 +1,56 @@
+name: Build Android APK
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: build-apk
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 22
+
+      - uses: actions/setup-java@v5
+        with:
+          distribution: temurin
+          java-version: 21
+
+      - name: Collect the game files
+        run: |
+          mkdir www
+          cp index.html style.css game.js www/
+          if [ -d assets ]; then cp -r assets www/assets; fi
+
+      - name: Create the Android project
+        run: |
+          echo '{"name":"bubble-bliss","version":"1.0.0","private":true}' > package.json
+          npm install @capacitor/core@8 @capacitor/cli@8 @capacitor/android@8
+          npx cap init "Bubble Bliss" com.bubblebliss.game --web-dir www
+          npx cap add android
+          npx cap sync android
+
+      - name: Build the APK
+        run: |
+          cd android
+          chmod +x gradlew
+          ./gradlew assembleDebug
+
+      - name: Publish the APK on the Releases page
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          cp android/app/build/outputs/apk/debug/app-debug.apk BubbleBliss.apk
+          gh release delete latest --yes --cleanup-tag || true
+          gh release create latest BubbleBliss.apk --title "Latest Bubble Bliss APK" --notes "Debug build from commit ${GITHUB_SHA::7}" --target "$GITHUB_SHA"
