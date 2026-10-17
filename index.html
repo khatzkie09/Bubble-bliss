@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#FFF8EE">
 <title>Bubble Bliss</title>
-<link rel="stylesheet" href="style.css">
+<link rel="stylesheet" href="style.css?v=2">
 </head>
 <body>
   <h1>Bubble Bliss</h1>
@@ -16,6 +16,16 @@
   <div id="board" aria-label="Bubble board"></div>
   <p id="msg" aria-live="polite"></p>
   <button id="again" class="btn" type="button">New board</button>
-  <script src="game.js"></script>
+  <script>
+    window.onerror = function (m, s, l) {
+      var el = document.getElementById('msg');
+      if (el) el.textContent = 'Error: ' + m + ' (line ' + l + ')';
+    };
+    window.addEventListener('load', function () {
+      var el = document.getElementById('msg');
+      if (el && !el.textContent) el.textContent = 'game.js did not run';
+    });
+  </script>
+  <script src="game.js?v=2"></script>
 </body>
 </html>
